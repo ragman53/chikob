@@ -1,0 +1,92 @@
+---
+interface Props {
+  pageTitle: string;
+}
+const { pageTitle } = Astro.props;
+const menuItems = [
+  { name: "CHIKOB", href: "/" },
+  { name: "IDEA", href: "/idea" },
+  { name: "CRAFT", href: "/craft" },
+  { name: "CODE", href: "/code" },
+  { name: "WHO", href: "/who" },
+];
+const inactiveItems = menuItems.filter((item) => item.name !== pageTitle);
+---
+
+<div class="nav-container">
+  <nav class="top-nav">
+    <ul class="menu-list" transition:name="menu-list">
+      {
+        inactiveItems.map((item) => (
+          <li>
+            <a href={item.href}>{item.name}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+  <div class="display-area">
+    <span class="page-title" transition:name="page-title">{pageTitle}</span>
+  </div>
+</div>
+
+<style>
+  .nav-container {
+    width: 100%;
+    max-width: 100%;
+  }
+  .top-nav {
+    height: clamp(1rem, 3vw, 1.8rem);
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .menu-list {
+    /* Simplified Selector */
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .top-nav a {
+    color: var(--color-foreground);
+    text-decoration: none;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    font-size: clamp(0.75rem, 2.5vw, 1.6rem);
+  }
+  .top-nav a:hover {
+    opacity: 1;
+  }
+  .display-area {
+    margin-top: 0.1rem;
+    text-align: center;
+    min-height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .page-title {
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    font-size: clamp(1.25rem, 2.5vw, 1.8rem);
+  }
+  .top-nav a, .page-title {
+    font-family: var(--font-family-heading);
+  }
+  @media (max-width: 600px) {
+    .menu-list {
+      justify-content: space-around;
+    }
+    .display-area {
+      margin-top: 0.2rem;
+      min-height: 30px;
+    }
+  }
+</style>

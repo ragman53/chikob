@@ -1,22 +1,165 @@
+---
+// File: src/layouts/Layout.astro (The definitive version)
+import { ClientRouter } from "astro:transitions";
+import Navigation from "../components/Navigation.astro";
+
+interface Props {
+  title: string;
+  pageTitle: string;
+}
+const { title, pageTitle } = Astro.props;
+---
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+
+    <ClientRouter />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Boldonse&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="page-wrapper">
+      <Navigation pageTitle={pageTitle} />
+
+      <main class="content-area">
+        <slot />
+      </main>
+    </div>
+  </body>
 </html>
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
+<style is:global>
+  /* --- Global Styles & Variables --- */
+  :root {
+    --color-background: #a54224;
+    --color-foreground: #faffc5;
+    --border-color: #a9bfa8;
+    --font-family-main: 'Bellefair', 'Times New Roman', serif;
+    --font-family-heading: 'Boldonse', 'Georgia', serif;
+  }
+
+  body,
+  html {
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-family-main);
+    font-size: 25px; 
+  }
+
+  /* --- Animation Definitions --- */
+
+  /* 1. Page Title Animations */
+  @keyframes title-slide-out {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(2000px);
+      opacity: 1;
+    }
+  }
+  @keyframes title-slide-in {
+    from {
+      transform: translateX(-2000px);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  /* 2. Menu Carousel Animations */
+  @keyframes carousel-slide-out {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+  }
+  @keyframes carousel-slide-in {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  @keyframes page-flip-out {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(-90deg); }
+  }
+  @keyframes page-flip-in { 
+    from { transform: rotateY(90deg); }
+    to { transform: rotateY(0deg); }
+  }
+
+  /* --- View Transition Rules --- */
+
+  /* Apply the animations to the named elements from Navigation.astro */
+  ::view-transition-old(page-title) {
+    animation: 800ms title-slide-out ease-in forwards;
+  }
+  ::view-transition-new(page-title) {
+    animation: 800ms title-slide-in ease-out 150ms forwards;
+  }
+  ::view-transition-old(menu-list) {
+    animation: 800ms carousel-slide-out ease-in forwards;
+  }
+  ::view-transition-new(menu-list) {
+    animation: 800ms carousel-slide-in ease-out 150ms forwards;
+  }
+  ::view-transition-group(root) {
+    transform-style: preserve-3d;
+  }
+  ::view-transition-old(root) {
+    animation: 800ms page-flip-out ease-in forwards;
+    transform-origin: left center;
+    backface-visibility: hidden;
+  }
+  ::view-transition-new(root) {
+    animation: 800ms page-flip-in ease-out forwards;
+    transform-origin: right center;
+    backface-visibility: hidden;
+  }
+  /* --- Layout Styles --- */
+  .page-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.2rem;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 100vh;
+    perspective: 2000px;
+  }
+
+  .content-area {
+    padding-top: 0.5rem;
+    width: 100%;
+    max-width: 100%;
+    transform-style: preserve-3d;
+  }
+  /* --- Media Query for Layout --- */
+  @media (max-width: 600px) {
+    .page-wrapper {
+      padding: 0.2rem;
+    }
+    .content-area {
+      padding-top: 0.2rem;
+    }
+  }
 </style>

@@ -3,12 +3,14 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --host --port 8080",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.10.1"
+    "@astrojs/ts-plugin": "^1.10.4",
+    "astro": "^5.10.1",
+    "gsap": "^3.13.0"
   }
 }
