@@ -36,10 +36,10 @@ const inactiveItems = menuItems.filter((item) => item.name !== pageTitle);
     max-width: 100%;
   }
   .top-nav {
-    height: clamp(1rem, 3vw, 1.8rem);
+    height: clamp(1rem, 3vw, 1.2rem);
     display: flex;
     align-items: center;
-    border-bottom: 1px solid var(--border-color);
+    /*{ border-bottom: 2px solid var(--border-color); */
   }
   .menu-list {
     /* Simplified Selector */
@@ -57,7 +57,7 @@ const inactiveItems = menuItems.filter((item) => item.name !== pageTitle);
     letter-spacing: 0.1em;
     opacity: 0.7;
     transition: opacity 0.2s;
-    font-size: clamp(0.75rem, 2.5vw, 1.6rem);
+    font-size: clamp(0.7rem, 2.5vw, 1.0rem);
   }
   .top-nav a:hover {
     opacity: 1;
@@ -75,7 +75,7 @@ const inactiveItems = menuItems.filter((item) => item.name !== pageTitle);
   .page-title {
     font-weight: bold;
     letter-spacing: 0.1em;
-    font-size: clamp(1.25rem, 2.5vw, 1.8rem);
+    font-size: clamp(0.8rem, 2.5vw, 1rem);
   }
   .top-nav a, .page-title {
     font-family: var(--font-family-heading);
