@@ -32,8 +32,24 @@ const inactiveItems = menuItems.filter((item) => item.name !== pageTitle);
 
 <style>
   .nav-container {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-sizing: border-box;
     width: 100%;
-    max-width: 100%;
+    background-color: var(--color-background);
+  }
+  .nav-container::after {
+    content: '';
+    position: absolute;
+    bottom: -2rem;
+    left: 0;
+    width: 100%;
+    height: 2rem;
+    background: linear-gradient(
+      to bottom, var(--color-background), transparent
+    );
+    pointer-events: none;
   }
   .top-nav {
     height: clamp(1rem, 3vw, 1.2rem);

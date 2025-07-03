@@ -8,6 +8,7 @@ interface Props {
   pageTitle: string;
 }
 const { title, pageTitle } = Astro.props;
+const themeClass = `theme-${pageTitle.toLowerCase()}`;
 ---
 <!doctype html>
 <html lang="ja">
@@ -22,7 +23,7 @@ const { title, pageTitle } = Astro.props;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Boldonse&display=swap" rel="stylesheet">
   </head>
-  <body>
+  <body class={themeClass}>
     <div class="page-wrapper">
       <Navigation pageTitle={pageTitle} />
 
@@ -36,13 +37,33 @@ const { title, pageTitle } = Astro.props;
 <style is:global>
   /* --- Global Styles & Variables --- */
   :root {
-    --color-background: #8A0000;
-    --color-foreground: #FFF287;
+    --color-background: #cccccc;
+    --color-foreground: #c42e2e;
     --border-color: #3B060A;
     --font-family-main: 'Bellefair', 'Times New Roman', serif;
     --font-family-heading: 'Boldonse', 'Georgia', serif;
   }
-
+  /* ---Define other themes by overriding CSS variables for each menu page ---*/
+  .theme-idea {
+    --color-background: #FAFFC5;
+    --color-foreground: #3A3960;
+    --border-color: #5E686D;
+  }
+  .theme-craft {
+    --color-background: #FFF287;
+    --color-foreground: #3B060A;
+    --border-color: #8A0000;
+  }
+  .theme-code {
+    --color-background: #6adb64;
+    --color-foreground: #000000;
+    --border-color: #000000;
+  }
+  .theme-who {
+    --color-background: #D3ECA7;
+    --color-foreground: #19282F;
+    --border-color: #B33030;
+  }
   body,
   html {
     margin: 0;
@@ -51,6 +72,7 @@ const { title, pageTitle } = Astro.props;
     color: var(--color-foreground);
     font-family: var(--font-family-main);
     font-size: 25px; 
+    transition: background-color 0.8s ease;
   }
 
   /* --- Animation Definitions --- */
