@@ -1,0 +1,62 @@
+---
+// src/pages/idea.astro
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('idea')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf() );
+---
+<Layout title="IDEA" pageTitle="IDEA">
+	<section class="post-list-container">
+		{posts.map((post) => (
+			<details class="post-item">
+				<summary class="post-summary">
+					<span class="post-title">{post.data.title}</span>
+					<time datetime={post.data.pubDate.toISOString()}>
+						{post.data.pubDate.toLocaleDateString('en-US', {
+							year: 'numeric',
+							month: 'long',
+							day: 'numeric'
+						})}
+					</time>
+				</summary>
+				<div class="post-description">
+					<p>{post.data.description}</p>
+					<a href={`/idea/${post.slug}`}>Read full article...</a>
+				</div>
+			</details>
+		))}
+	</section>
+</Layout>
+
+<style>
+	.post-list-container {
+		width: 100%;
+		border-top: 1px solid var(--border-color);
+	}
+	.post-item {
+		border-bottom: 1px solid var(--border-color);
+	}
+	.post-summary {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem 0.5rem;
+		cursor: pointer;
+		list-style: none;
+		font-family: var(--font-family-heading);
+		font-size: clamp(0.5rem, 2vw, 1rem);
+		border-right: 1px solid var(--border-color);
+	}
+	.post-summary::-webkit-details-marker {
+		display: none;
+	}
+	.post-description {
+		padding: 0.5rem 1rem 1rem;
+	}
+	.post-description a {
+		color: var(--color-foreground);
+		text-decoration: underline;
+		font-weight: bold;
+	}
+</style>
