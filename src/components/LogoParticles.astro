@@ -1,0 +1,42 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+}
+const { src, alt } = Astro.props;
+---
+<div id="particle-logo-container" data-image-url={src} class="logo-container" aria-label={alt}>
+</div>
+
+<style>
+  .logo-container {
+    width: 100%;
+    height: 80vh; /* Takes 80% of the viewport height */
+    max-width: 800px;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  import { ParticleSystem } from "../scripts/particle.ts";
+
+  const init = () => {
+    const container = document.getElementById("particle-logo-container") as HTMLElement;
+    if (container && !(container as any).isInitialized) {
+      const particleSystem = new ParticleSystem(container);
+      (container as any).isInitialized = true;
+      (container as any).cleanup = () => particleSystem.destroy();
+    }
+  };
+
+  const cleanup = () => {
+    const container = document.getElementById("particle-logo-container");
+    if (container && (container as any).cleanup) {
+      (container as any).cleanup();
+      delete (container as any).isInitialized;
+    }
+  };
+
+  document.addEventListener("astro:page-load", init);
+  document.addEventListener("astro:before-swap", cleanup);
+</script>
