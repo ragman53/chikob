@@ -1,0 +1,55 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+  languages?: string[]; // e.g., "TypeScript", "Rust"
+}
+const { href, title, description, languages } = Astro.props;
+---
+
+<a href={href} target="_blank" rel="noopener noreferrer" class="card">
+  <div class="card-content">
+    <h3 class="title">{title}</h3>
+    <p class="description">{description}</p>
+  </div>
+  {languages && languages.length > 0 && (
+    <div class="tags-container">
+      {languages.map((lang) => (
+        <span class="language-tag">{lang}</span>
+      ))}
+    </div>
+  )}
+</a>
+
+<style>
+  .card {
+    display: block;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    text-decoration: none;
+    color: var(--color-foreground);
+    transition: background-color 0.2s ease;
+  }
+  .card:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  .title {
+    font-family: var(--font-family-heading);
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem;
+  }
+  .description {
+    margin: 0;
+    opacity: 0.8;
+  }
+  .language-tag {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    opacity: 0.7;
+  }
+</style>

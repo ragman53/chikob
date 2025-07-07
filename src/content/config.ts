@@ -32,10 +32,21 @@ const codeCollection = defineCollection({
   }),
 });
 
+const whoCollection = defineCollection({
+  type: 'content',
+  schema: z.object({
+    name: z.string(),
+    title: z.string(),
+    email: z.string().email(),
+    website: z.string().url(),
+  }),
+});
+
 
 // 4. Export all collections from a single 'collections' object
 export const collections = {
   'idea': ideaCollection,
   'craft': craftCollection,
   'code': codeCollection,
+  'who': whoCollection,
 };

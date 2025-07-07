@@ -1,0 +1,90 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getEntry } from "astro:content";
+import ObfuscatedEmail from "../../components/ObfuscatedEmail.astro";
+const cv = await getEntry("who", "cv");
+const { Content } = await cv.render();
+
+// Split the email into two parts for the component
+const emailParts = cv.data.email.split("@");
+const emailUser = emailParts[0];
+const emailDomain = emailParts[1];
+---
+
+<Layout title={cv.data.title} pageTitle="WHO">
+  <div class="cv-container">
+    <header class="cv-header">
+      <h1>{cv.data.name}</h1>
+      <p>{cv.data.title}</p>
+      <div class="contact-info">
+        {/* 2. Use the new component instead of a standard <a> tag */}
+        <ObfuscatedEmail user={emailUser} domain={emailDomain} />
+        <span>&bull;</span>
+        <a href={cv.data.website} target="_blank" rel="noopener noreferrer"
+          >{cv.data.website}</a
+        >
+      </div>
+    </header>
+    <Content />
+  </div>
+</Layout>
+
+<style>
+  .cv-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .cv-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 2rem;
+    width: 100%;
+  }
+  .cv-header h1 {
+    font-family: var(--font-family-heading);
+    font-size: 2.5rem;
+    margin: 0;
+  }
+  .contact-info :global(a) {
+    color: var(--color-foreground);
+    text-decoration: none;
+  }
+  .contact-info {
+    margin-top: 1rem;
+    opacity: 0.8;
+  }
+  .contact-info span {
+    margin: 0 0.5rem;
+  }
+  .contact-info a {
+    color: var(--color-foreground);
+    text-decoration: none;
+  }
+  .cv-container :global(.cv-grid) {
+    display: grid;
+    gap: 2rem;
+  }
+  .cv-container :global(h2) {
+    font-family: var(--font-family-heading);
+    font-size: 1.5rem;
+    margin-top: 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .cv-container :global(h3) {
+    font-size: 1.1rem;
+    margin-bottom: 0;
+  }
+  .cv-container :global(ul) {
+    padding-left: 1.2rem;
+  }
+  .cv-container :global(p),
+  .cv-container :global(li) {
+    line-height: 1.7;
+  }
+</style>

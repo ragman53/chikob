@@ -36,6 +36,8 @@ const posts = (await getCollection('idea')).sort(
 	}
 	.post-item {
 		border-bottom: 1px solid var(--border-color);
+		border-left: 1px solid var(--border-color);
+		border-right: 1px solid var(--border-color);
 	}
 	.post-summary {
 		display: flex;
@@ -46,7 +48,6 @@ const posts = (await getCollection('idea')).sort(
 		list-style: none;
 		font-family: var(--font-family-heading);
 		font-size: clamp(0.5rem, 2vw, 1rem);
-		border-right: 1px solid var(--border-color);
 	}
 	.post-summary::-webkit-details-marker {
 		display: none;

@@ -25,7 +25,10 @@ const themeClass = `theme-${pageTitle.toLowerCase()}`;
   </head>
   <body class={themeClass}>
     <div class="page-wrapper">
-      <Navigation pageTitle={pageTitle} />
+      <header class="site-header">
+        <Navigation pageTitle={pageTitle} />
+      </header>
+
       <main class="content-area">
         <slot />
       </main>
@@ -157,6 +160,13 @@ const themeClass = `theme-${pageTitle.toLowerCase()}`;
     backface-visibility: hidden;
   }
   /* --- Layout Styles --- */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    width: 100%;
+    background:color: var(--color-background);
+  }
   .page-wrapper {
     display: flex;
     flex-direction: column;
@@ -171,7 +181,7 @@ const themeClass = `theme-${pageTitle.toLowerCase()}`;
   .content-area {
     padding-top: 0.5rem;
     width: 100%;
-    max-width: 100%;
+    max-width: 1000px;
     transform-style: preserve-3d;
   }
   /* --- Media Query for Layout --- */

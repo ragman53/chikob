@@ -1,0 +1,34 @@
+---
+// This component takes the email user and domain as separate parts.
+interface Props {
+  user: string;
+  domain: string;
+}
+const { user, domain } = Astro.props;
+---
+<span class="email-placeholder" data-user={user} data-domain={domain}>
+  [ E-mail ]
+</span>
+
+<script>
+  function revealEmails() {
+    // Find all placeholders that have NOT been processed yet.
+    document.querySelectorAll('.email-placeholder:not([data-processed])').forEach(span => {
+      const element = span as HTMLElement;
+      const user = element.dataset.user;
+      const domain = element.dataset.domain;
+      
+      if (user && domain) {
+        const email = `${user}@${domain}`;
+        const link = document.createElement('a');
+        link.href = `mailto:${email}`;
+        link.textContent = email;
+        element.replaceWith(link);
+      }
+      
+      // Mark this element as processed to prevent running again.
+      element.dataset.processed = 'true';
+    });
+  }
+  document.addEventListener('astro:page-load', revealEmails);
+</script>
