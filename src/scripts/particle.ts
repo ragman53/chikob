@@ -184,7 +184,7 @@ export class ParticleSystem {
       }
 
       // Apply a padding factor to create some margin
-      this.particles.scale.set(scale, scale, 1);
+      this.particles.scale.set(scale*0.9, scale*0.9, 1);
     }
   }
 
