@@ -35,56 +35,65 @@ export class ParticleSystem {
     this.bindMethods();
     
     const imageUrl = this.container.dataset.imageUrl;
-    if (imageUrl) this.createParticlesFromImage(imageUrl);
+    if (imageUrl) this.loadAndCreateParticles(imageUrl);
     
     this.addEventListeners();
     this.animate();
   }
   
-  private createParticlesFromImage(imageUrl: string): void {
+  private loadAndCreateParticles(imageUrl: string): void {
     const loader = new THREE.ImageLoader();
     loader.load(imageUrl, (image) => {
-      const imgWidth = image.width;
-      const imgHeight = image.height;
+      // Get the ACTUAL display size of the container
+      const viewWidth = this.container.clientWidth;
+      const viewHeight = this.container.clientHeight;
+      
+      const img = image;
+      const imgAspectRatio = img.naturalWidth / img.naturalHeight;
+      const viewAspectRatio = viewWidth / viewHeight;
+
+      // Calculate the size the image should be to fit inside the container
+      let drawWidth, drawHeight;
+      if (imgAspectRatio > viewAspectRatio) {
+        drawWidth = viewWidth;
+        drawHeight = drawWidth / imgAspectRatio;
+      } else {
+        drawHeight = viewHeight;
+        drawWidth = drawHeight * imgAspectRatio;
+      }
       
       const tempCtx = document.createElement('canvas').getContext('2d');
       if (!tempCtx) return;
-      tempCtx.canvas.width = imgWidth;
-      tempCtx.canvas.height = imgHeight;
-      tempCtx.drawImage(image, 0, 0);
-      const imageData = tempCtx.getImageData(0, 0, imgWidth, imgHeight).data;
+      tempCtx.canvas.width = drawWidth;
+      tempCtx.canvas.height = drawHeight;
+      tempCtx.drawImage(img, 0, 0, drawWidth, drawHeight);
+      const imageData = tempCtx.getImageData(0, 0, drawWidth, drawHeight).data;
 
       const positions = [];
-      const step = 4; // Particle density, higher value means fewer particles
+      const step = 2; // You can adjust this for particle density
 
-      for (let y = 0; y < imgHeight; y += step) {
-        for (let x = 0; x < imgWidth; x += step) {
-          const alpha = imageData[(y * imgWidth + x) * 4 + 3];
+      for (let y = 0; y < drawHeight; y += step) {
+        for (let x = 0; x < drawWidth; x += step) {
+          const alpha = imageData[(y * Math.floor(drawWidth) + x) * 4 + 3];
           if (alpha > 128) {
-            positions.push(x - imgWidth / 2, -y + imgHeight / 2, 0);
+            // Position particles relative to the center of the container
+            positions.push(x - drawWidth / 2, -y + drawHeight / 2, 0);
           }
         }
       }
       
       const geometry = new THREE.BufferGeometry();
-      const posAttribute = new THREE.Float32BufferAttribute(positions, 3);
-      geometry.setAttribute('position', posAttribute);
-      this.originalPositions = new Float32Array(posAttribute.array);
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      this.originalPositions = new Float32Array(geometry.attributes.position.array);
 
       const material = new THREE.PointsMaterial({
         color: 0xa32727,
-        size: 2.0,       // Particle size
-        sizeAttenuation: false // All particles will have the same size on screen
+        size: 1.8,
+        sizeAttenuation: true
       });
 
       this.particles = new THREE.Points(geometry, material);
-      
-      const scale = Math.min(
-        this.container.clientWidth / imgWidth,
-        this.container.clientHeight / imgHeight
-      ) * 0.8; // Use 80% of the available space
-      this.particles.scale.set(scale, scale, 1);
-
+      // No need to scale the particle system anymore, as it's created at the correct size
       this.scene.add(this.particles);
     });
   }
@@ -94,8 +103,8 @@ export class ParticleSystem {
     if (!this.particles || !this.originalPositions) return;
 
     const positions = this.particles.geometry.attributes.position.array as Float32Array;
-    const maxDist = 80;  // Interaction radius, adjust as you like
-    const ease = 0.05;   // How fast particles return to origin
+    const maxDist = 70;  // Interaction radius, adjust as you like
+    const ease = 0.02;   // How fast particles return to origin
 
     for (let i = 0; i < positions.length; i += 3) {
       const dX = positions[i] - this.mouse.x;
