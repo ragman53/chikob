@@ -1,10 +1,10 @@
 ---
-import { getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
 
 // This function tells Astro to create a page for every entry in the 'idea' collection.
 export async function getStaticPaths() {
-  const posts = await getCollection('idea');
+  const posts = await getCollection("idea");
   return posts.map((post) => ({
     params: { slug: post.slug },
     props: post,
@@ -15,46 +15,53 @@ export async function getStaticPaths() {
 const post = Astro.props;
 const { Content } = await post.render();
 ---
+
 <Layout title={post.data.title} pageTitle="IDEA">
-	<article class="prose">
-		<p>
-			<time datetime={post.data.pubDate.toISOString()}>
-				{post.data.pubDate.toLocaleDateString('en-US', {
-					year: 'numeric',
-					month: 'long',
-					day: 'numeric',
-				})}
-			</time>
-		</p>
-		<hr>
-		<Content />
-		<br>
-		<br>
-	</article>
+  <article class="prose">
+    <p>
+      <time datetime={post.data.pubDate.toISOString()}>
+        {
+          post.data.pubDate.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })
+        }
+      </time>
+    </p>
+    <hr />
+    <Content />
+    <br />
+    <br />
+  </article>
 </Layout>
 
 <style>
-	.prose {
-		max: width 100%;;
-		margin: 0 auto;
-	}
-	.prose :global(h2) { /* Styles for h2 inside the Markdown content */
-		margin-top: 2em;
-		padding-bottom: 0.5em;
-		border-bottom: 1px solid var(--border-color);
-	}
-	.prose :global(p) {
-		line-height: 1rem;
-	}
-	.title {
-		font-size: clamp(1rem, 8vw, 2rem);
-		font-family: var(--font-family-main);
-		margin-bottom: 1rem;
-		line-height: 1.2;
-	}
-	.description {
-		font-size: 1rem;
-		opacity: 0.8;
-		margin-bottom: 1rem;
-	}
+  .prose {
+    width: 100%;
+    max-width: 72ch; /* 'ch' is a unit relative to character width */
+    margin: 0 auto;
+    padding: 0 1rem; /* Add horizontal padding */
+    box-sizing: border-box; /* Ensure padding is included in the width */
+  }
+  .prose :global(h2) {
+    /* Styles for h2 inside the Markdown content */
+    margin-top: 2em;
+    padding-bottom: 0.5em;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .prose :global(p) {
+    line-height: 1rem;
+  }
+  .title {
+    font-size: clamp(1rem, 8vw, 2rem);
+    font-family: var(--font-family-main);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  .description {
+    font-size: 1rem;
+    opacity: 0.8;
+    margin-bottom: 1rem;
+  }
 </style>
