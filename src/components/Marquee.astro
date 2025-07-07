@@ -1,0 +1,58 @@
+---
+interface Props {
+    text: string;
+    href: string;
+}
+const { text, href } = Astro.props;
+---
+<div class="marquee-container">
+    <a href={href} class="marquee-link">
+        <div class="marquee-text">{text}</div>
+        <div class="marquee-text" aria-hidden="true">{text}</div>
+        <div class="marquee-text" aria-hidden="true">{text}</div>
+        <div class="marquee-text" aria-hidden="true">{text}</div>
+    </a>
+</div>
+
+<style>
+    @keyframes scroll {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-50%);
+        }
+    }
+    .marquee-container {
+        width: 100%;
+        overflow: hidden;
+        background-color: var(--color-foreground);
+        color: var(--color-background);
+        padding: 0.8rem 0;
+        flex-shrink: 0;
+    }
+    .marquee-container:hover {
+        background-color: yellow;
+        color: red;
+    }
+    .marquee-link {
+        width: 350%;
+        display: flex;
+        text-decoration: none;
+        color: inherit;
+        animation: scroll 30s linear infinite;
+    }
+    .marquee-link:hover {
+        animation-play-state: paused;
+    }
+    .marquee-text {
+        width: 50%;
+        flex-shrink: 0;
+        text-align: center;
+        white-space: nowrap;
+        font-family: var(--font-family-heading);
+        font-size: 1.2rem;
+        padding: 0 2rem;
+        box-sizing: border-box;
+    }
+</style>
