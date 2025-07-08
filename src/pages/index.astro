@@ -7,25 +7,23 @@ import logoSrc from "../assets/footwork-picnic-logo.svg";
 
 <Layout title="CHIKOB" pageTitle="CHIKOB">
 	<div class="hero-section">
-      <LogoParticles src={logoSrc.src} alt="Interactice Logo" />
-    </div>
+		<LogoParticles src={logoSrc.src} alt="Interactice Logo" />
+	</div>
 	<Marquee
-    text="NEW POST: The Supermarket as Sponge: Forging a Porous Sphere of Affection through Contaminated Ethics"
-    href="/idea/niku-no-hanamasa"
+	text="NEW POST: The Supermarket as Sponge: Forging a Porous Sphere of Affection through Contaminated Ethics"
+	href="/idea/niku-no-hanamasa"
 	/>
 </Layout>
 
 <style>
-	:global(main.content-area) {
-		padding: 0;
-		align-items: center;
-	}
 	.hero-section {
+		width: 100%;
+		/* Set a specific height based on the dynamic viewport height, 
+		   leaving space for the nav and marquee. */
+		height: calc(100dvh - 10rem); /* 100% of screen height minus ~12rem for header/footer */
+		/* Centering styles are still important */
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		width: 100%;
-		flex-grow: 1;
-		overflow: hidden;
 	}
 </style>

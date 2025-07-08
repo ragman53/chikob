@@ -7,52 +7,58 @@ const { text, href } = Astro.props;
 ---
 <div class="marquee-container">
     <a href={href} class="marquee-link">
-        <div class="marquee-text">{text}</div>
-        <div class="marquee-text" aria-hidden="true">{text}</div>
-        <div class="marquee-text" aria-hidden="true">{text}</div>
-        <div class="marquee-text" aria-hidden="true">{text}</div>
+        <div class="marquee-content">
+            <span class="marquee-text">{text}</span>
+            <span class="marquee-text" aria-hidden="true">{text}</span>
+        </div>
     </a>
 </div>
 
 <style>
     @keyframes scroll {
-        from {
-            transform: translateX(0);
-        }
-        to {
-            transform: translateX(-50%);
-        }
+        from { transform: translateX(0%); }
+        to { transform: translateX(-100%); }
     }
+
     .marquee-container {
         width: 100%;
         overflow: hidden;
         background-color: var(--color-foreground);
         color: var(--color-background);
         padding: 0.8rem 0;
-        flex-shrink: 0;
+        flex-shrink: 0; /* Prevents the container from shrinking in a flex layout */
+        position: fixed; /* Fix it to the bottom */
+        bottom: 0;
+        left: 0;
+    }
+
+    .marquee-link {
+        display: block;
+        width: 100%;
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .marquee-content {
+        /* This is the element that actually moves */
+        display: flex;
+        width: fit-content; /* Let the width be determined by its children */
+        animation: scroll 40s linear infinite;
+    }
+
+    .marquee-link:hover .marquee-content {
+        animation-play-state: paused;
     }
     .marquee-container:hover {
         background-color: yellow;
         color: red;
     }
-    .marquee-link {
-        width: 350%;
-        display: flex;
-        text-decoration: none;
-        color: inherit;
-        animation: scroll 30s linear infinite;
-    }
-    .marquee-link:hover {
-        animation-play-state: paused;
-    }
+
     .marquee-text {
-        width: 50%;
-        flex-shrink: 0;
-        text-align: center;
+        /* Remove fixed widths and let the text define its own space */
         white-space: nowrap;
         font-family: var(--font-family-heading);
         font-size: 1.2rem;
-        padding: 0 2rem;
-        box-sizing: border-box;
+        padding: 0 2rem; /* Add space between text repetitions */
     }
 </style>

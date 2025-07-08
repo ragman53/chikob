@@ -74,7 +74,7 @@ const themeClass = `theme-${pageTitle.toLowerCase()}`;
     color: var(--color-foreground);
     font-family: var(--font-family-main);
     font-size: 22px; 
-    transition: background-color 0.8s ease;
+    transition: background-color 1s linear;
   }
 
   /* --- Animation Definitions --- */
@@ -164,8 +164,14 @@ const themeClass = `theme-${pageTitle.toLowerCase()}`;
     display: flex;
     flex-direction: column;
     width: 100%;
-    min-height: 100vh;
+    min-height: 100dvh;
     box-sizing: border-box;
+  }
+  /* On the homepage, make the content area a flex container as well */
+  body.is-homepage .content-area {
+    flex-grow: 1; /* Make the main content area fill the remaining space */
+    display: flex;
+    flex-direction: column;
   }
   .site-header {
     position: sticky;
@@ -177,17 +183,19 @@ const themeClass = `theme-${pageTitle.toLowerCase()}`;
   }
   .content-area {
     width: 100%;
+    /*max-width: 1200px;*/
+    margin: 0 auto;
+    padding-top: 1rem;
+    box-sizing: border-box;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
   }
-  /* --- Media Query for Layout --- */
-  @media (max-width: 600px) {
-    .page-wrapper {
-      padding: 0.2rem;
-    }
-    .content-area {
-      padding-top: 0.2rem;
-    }
+  /* On the homepage, remove padding to allow full-width content */
+  body.is-homepage .content-area {
+    max-width: 100%;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
   }
 </style>
