@@ -1,39 +1,29 @@
-# Astro Starter Kit: Basics
+# My Portfolio Website with Astro & Three.js
+This is a personal portfolio website built with a brutalist-inspired aesthetic, leveraging the power of modern web technologies like Astro, Three.js, and CSS animations. The project focuses on creating a unique, performant, and highly interactive user experience.
 
-```sh
-npm create astro@latest -- --template basics
-```
+## ✨ Features
+- Seamless Page Transitions: Utilizes Astro's View Transitions API to create smooth, app-like navigation without full page reloads.
+- Dynamic Theming: Each page section (/idea, /craft, etc.) features its own unique color scheme, which is applied globally and transitions smoothly between pages.
+- Custom Animations:
+- A unique 3D page-flip effect for content transitions.
+- An interactive navigation bar where the active page title and menu items animate in and out on navigation.
+- Interactive Particle Logo: The homepage features a high-performance, interactive logo built with Three.js (WebGL). The SVG logo is deconstructed into a particle system that reacts to the user's cursor movements in real-time.
+- Infinite Marquee Banner: A seamlessly looping announcement banner at the bottom of the landing page, built with pure CSS animations.
+- Type-Safe Content Management: Blog posts and articles are managed through Astro's Content Collections, using MDX for a rich authoring experience with type-safety provided by Zod schemas.
+- Fully Responsive Design: The layout, typography, and interactive elements are designed to work flawlessly across all devices, from mobile phones to large desktop screens.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+## 🛠️ Tech Stack
+- Framework: Astro
+- 3D/WebGL: Three.js
+- Animations: Astro View Transitions API, CSS Animations
+- Styling: CSS with Custom Properties
+- Content: Astro Content Collections, MDX
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+#### Development Environment: Docker Dev Container
+#### Deployment: Cloudflare Pages
 
 ## 🧞 Commands
-
 All commands are run from the root of the project, from a terminal:
-
 | Command                   | Action                                           |
 | :------------------------ | :----------------------------------------------- |
 | `npm install`             | Installs dependencies                            |
@@ -43,6 +33,3 @@ All commands are run from the root of the project, from a terminal:
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
 
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
