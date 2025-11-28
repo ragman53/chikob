@@ -11,9 +11,9 @@ const posts = (await getCollection('idea')).sort(
 		{posts.map((post) => (
 			<details class="post-item">
 				<summary class="post-summary">
-					<span class="post-title">{post.data.title}</span>
+					<span class="post-title" lang={post.data.lang || 'en'}>{post.data.title}</span>
 					<time datetime={post.data.pubDate.toISOString()}>
-						{post.data.pubDate.toLocaleDateString('en-US', {
+						{post.data.pubDate.toLocaleDateString(post.data.lang === 'ja' ? 'ja-JP' : 'en-US', {
 							year: 'numeric',
 							month: 'long',
 							day: 'numeric'
@@ -21,7 +21,7 @@ const posts = (await getCollection('idea')).sort(
 					</time>
 				</summary>
 				<div class="post-description">
-					<p>{post.data.description}</p>
+					<p lang={post.data.lang || 'en'}>{post.data.description}</p>
 					<a href={`/idea/${post.slug}`}>Read full article...</a>
 				</div>
 			</details>
@@ -46,8 +46,15 @@ const posts = (await getCollection('idea')).sort(
 		padding: 1rem 0.5rem;
 		cursor: pointer;
 		list-style: none;
-		font-family: var(--font-family-heading);
 		font-size: clamp(0.5rem, 2vw, 1rem);
+	}
+	/* English titles use Boldonse */
+	.post-title:lang(en) {
+		font-family: var(--font-family-heading);
+	}
+	/* Japanese titles use Japanese serif */
+	.post-title:lang(ja) {
+		font-family: var(--font-family-jp-heading);
 	}
 	.post-summary::-webkit-details-marker {
 		display: none;
@@ -59,5 +66,8 @@ const posts = (await getCollection('idea')).sort(
 		color: var(--color-foreground);
 		text-decoration: underline;
 		font-weight: bold;
+	}
+	.post-description p:lang(ja) {
+		font-family: var(--font-family-jp-main);
 	}
 </style>

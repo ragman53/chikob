@@ -17,11 +17,11 @@ const { Content } = await post.render();
 ---
 
 <Layout title={post.data.title} pageTitle="IDEA">
-  <article class="prose">
+  <article class="prose" lang={post.data.lang || 'en'}>
     <p>
       <time datetime={post.data.pubDate.toISOString()}>
         {
-          post.data.pubDate.toLocaleDateString("en-US", {
+          post.data.pubDate.toLocaleDateString(post.data.lang === 'ja' ? 'ja-JP' : 'en-US', {
             year: "numeric",
             month: "long",
             day: "numeric",
@@ -51,8 +51,15 @@ const { Content } = await post.render();
     border-bottom: 1px solid var(--border-color);
   }
   .prose :global(p) {
-    line-height: 1rem;
+    line-height: 1.5rem;
   }
+
+  /* Japanese content: slightly wider line spacing for readability */
+  .prose[lang="ja"] :global(p),
+  .prose[lang="ja"] :global(li) {
+    line-height: 1.8rem;
+  }
+
   .title {
     font-size: clamp(1rem, 8vw, 2rem);
     font-family: var(--font-family-main);

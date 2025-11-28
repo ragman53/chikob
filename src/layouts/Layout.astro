@@ -22,7 +22,7 @@ const themeClass = `theme-${pageTitle.toLowerCase()}`;
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=Vollkorn:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=Dela+Gothic+One&family=Noto+Serif+JP:wght@200..900&family=Vollkorn:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
   </head>
   <body class={themeClass}>
     <div class="page-wrapper">
@@ -45,6 +45,8 @@ const themeClass = `theme-${pageTitle.toLowerCase()}`;
     --border-color: #3B060A;
     --font-family-main: 'Vollkorn', 'Times New Roman', serif;
     --font-family-heading: 'Boldonse', 'Georgia', serif;
+    --font-family-jp-main: 'Noto Serif JP', 'Hiragino Kaku Gothic ProN', 'Meiryo', 'Yu Gothic', sans-serif;
+    --font-family-jp-heading: 'Dela Gothic One', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
   }
   /* ---Define other themes by overriding CSS variables for each menu page ---*/
   .theme-idea {
@@ -76,6 +78,50 @@ const themeClass = `theme-${pageTitle.toLowerCase()}`;
     font-family: var(--font-family-main);
     font-size: 22px; 
     transition: background-color 1s linear;
+  }
+
+  /* --- Language-Specific Typography --- */
+  /* Japanese content styling */
+  :lang(ja) {
+    font-family: var(--font-family-jp-main);
+    line-height: 1.9;
+    letter-spacing: 0.02em;
+    
+    /* Glyph spacing (proportional metrics) */
+    font-feature-settings: 'palt' 1; 
+    
+    /* Kinsoku handling (line-break rules for Japanese) */
+    line-break: strict;  
+    
+    /* IMPORTANT: adjust this as needed */
+    overflow-wrap: break-word; /* Only wrap when a word is too long */
+    word-break: break-all;     /* Prefer Japanese line breaks while preventing overflow */
+}
+
+  /* English content styling */
+  :lang(en) {
+    font-family: var(--font-family-main);
+    line-height: 1.6;
+    hyphens: auto;
+    word-break: normal;
+    overflow-wrap: anywhere;
+  }
+
+  /* Inline Japanese inside English paragraphs */
+  :lang(en) [lang="ja"],
+  :lang(en) span[lang="ja"],
+  :lang(en) em[lang="ja"] {
+    font-family: var(--font-family-jp-main);
+    font-style: normal;
+    letter-spacing: 0.02em;
+  }
+
+  /* Inline English inside Japanese paragraphs */
+  :lang(ja) [lang="en"],
+  :lang(ja) span[lang="en"],
+  :lang(ja) em[lang="en"] {
+    font-family: var(--font-family-main);
+    font-style: italic;
   }
 
   /* --- Animation Definitions --- */

@@ -7,6 +7,7 @@ const ideaCollection = defineCollection({
     title: z.string(),
     description: z.string(),
     pubDate: z.date(),
+    lang: z.enum(['en', 'ja']).default('en'), // content language: 'en' or 'ja'
   }),
 });
 
