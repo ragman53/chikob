@@ -181,83 +181,110 @@ const craftItems = Object.entries(craftImages)
   // Register GSAP plugins
   gsap.registerPlugin(ScrollTrigger);
 
-  // Check for reduced motion preference
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Store references for cleanup
+  let lenis: Lenis | null = null;
+  let lenisRafCallback: ((time: number) => void) | null = null;
 
-  if (!prefersReducedMotion) {
-    // Initialize Lenis for smooth scrolling
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // easeOutExpo
-      orientation: 'vertical',
-      smoothWheel: true,
-    });
-
-    // CRITICAL: Bind Lenis to GSAP's ticker for perfect sync
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
-    gsap.ticker.lagSmoothing(0);
-
-    // Update ScrollTrigger on Lenis scroll
-    lenis.on('scroll', ScrollTrigger.update);
+  function initAnimations() {
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // Select all craft items
     const craftItems = document.querySelectorAll<HTMLElement>('.craft-item');
+    
+    // Exit early if no items found (not on craft page)
+    if (craftItems.length === 0) return;
 
-    // Animate items with stagger for row-by-row effect
-    craftItems.forEach((item, index) => {
-      const column = item.dataset.column;
-      
-      // Set initial state based on column
-      // Use smaller rotation to prevent overflow on mobile
-      const initialRotation = column === 'left' ? -3 : 3;
-      const initialY = 50; // Smaller offset for tighter layouts
-
-      gsap.set(item, {
-        y: initialY,
-        rotation: initialRotation,
-        opacity: 0,
-        visibility: 'hidden',
+    if (!prefersReducedMotion) {
+      // Initialize Lenis for smooth scrolling
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // easeOutExpo
+        orientation: 'vertical',
+        smoothWheel: true,
       });
 
-      // Create scroll-triggered animation
-      // Trigger earlier (95%) so even first rows animate in on page load
-      // Add small delay based on index for staggered row effect
-      const rowDelay = (index % 2) * 0.1; // 0 for left, 0.1s for right column
-      
-      gsap.to(item, {
-        y: 0,
-        rotation: 0,
-        opacity: 1,
-        visibility: 'visible',
-        duration: 0.8,
-        delay: rowDelay,
-        ease: 'expo.out',
-        scrollTrigger: {
-          trigger: item,
-          start: 'top 98%',  // Fire almost immediately when item enters viewport
-          end: 'top 70%',
-          toggleActions: 'play none none none',
-          // markers: true, // Uncomment for debugging
-        },
-      });
-    });
+      // CRITICAL: Bind Lenis to GSAP's ticker for perfect sync
+      lenisRafCallback = (time: number) => {
+        lenis?.raf(time * 1000);
+      };
+      gsap.ticker.add(lenisRafCallback);
+      gsap.ticker.lagSmoothing(0);
 
-    // Cleanup on page navigation (for View Transitions)
-    document.addEventListener('astro:before-swap', () => {
-      lenis.destroy();
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-      gsap.ticker.remove((time: number) => {
-        lenis.raf(time * 1000);
+      // Update ScrollTrigger on Lenis scroll
+      lenis.on('scroll', ScrollTrigger.update);
+
+      // Animate items with stagger for row-by-row effect
+      craftItems.forEach((item, index) => {
+        const column = item.dataset.column;
+        
+        // Set initial state based on column
+        // Use smaller rotation to prevent overflow on mobile
+        const initialRotation = column === 'left' ? -3 : 3;
+        const initialY = 50; // Smaller offset for tighter layouts
+
+        gsap.set(item, {
+          y: initialY,
+          rotation: initialRotation,
+          opacity: 0,
+          visibility: 'hidden',
+        });
+
+        // Create scroll-triggered animation
+        // Trigger earlier (98%) so even first rows animate in on page load
+        // Add small delay based on index for staggered row effect
+        const rowDelay = (index % 2) * 0.1; // 0 for left, 0.1s for right column
+        
+        gsap.to(item, {
+          y: 0,
+          rotation: 0,
+          opacity: 1,
+          visibility: 'visible',
+          duration: 0.8,
+          delay: rowDelay,
+          ease: 'expo.out',
+          scrollTrigger: {
+            trigger: item,
+            start: 'top 98%',  // Fire almost immediately when item enters viewport
+            end: 'top 70%',
+            toggleActions: 'play none none none',
+            // markers: true, // Uncomment for debugging
+          },
+        });
       });
-    });
-  } else {
-    // For users who prefer reduced motion, just show items immediately
-    const craftItems = document.querySelectorAll<HTMLElement>('.craft-item');
-    craftItems.forEach((item) => {
-      item.style.opacity = '1';
-      item.style.visibility = 'visible';
-    });
+    } else {
+      // For users who prefer reduced motion, just show items immediately
+      craftItems.forEach((item) => {
+        item.style.opacity = '1';
+        item.style.visibility = 'visible';
+      });
+    }
   }
+
+  function cleanup() {
+    // Destroy Lenis
+    if (lenis) {
+      lenis.destroy();
+      lenis = null;
+    }
+    
+    // Remove ticker callback
+    if (lenisRafCallback) {
+      gsap.ticker.remove(lenisRafCallback);
+      lenisRafCallback = null;
+    }
+    
+    // Kill all ScrollTriggers
+    ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+  }
+
+  // Run on initial page load AND after View Transition navigations
+  document.addEventListener('astro:page-load', () => {
+    initAnimations();
+  });
+
+  // Cleanup before page swap (View Transitions)
+  document.addEventListener('astro:before-swap', () => {
+    cleanup();
+  });
 </script>
