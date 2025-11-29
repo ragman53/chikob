@@ -1,0 +1,263 @@
+---
+/**
+ * CraftScroll.astro
+ * High-performance scroll animation grid for creative works.
+ * Uses GSAP + ScrollTrigger + Lenis for 60fps+ silky animations.
+ */
+import { Image } from 'astro:assets';
+
+// Import all images from craft folder at build time
+const craftImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/content/craft/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true }
+);
+
+// Build a simple array of craft items from the images
+// Sort by filename (which contains date in YYYY-MM-DD format after kebab-case conversion)
+const craftItems = Object.entries(craftImages)
+  .map(([path, module]) => {
+    const filename = path.split('/').pop() || '';
+    const nameWithoutExt = filename.replace(/\.[^/.]+$/, '');
+    
+    // Extract date from filename (format: name-YYYY-MM-DD or name-YYYY-MM-DD-suffix)
+    const dateMatch = nameWithoutExt.match(/(\d{4})-(\d{2})-(\d{2})/);
+    const year = dateMatch ? parseInt(dateMatch[1], 10) : 2024;
+    const month = dateMatch ? parseInt(dateMatch[2], 10) : 1;
+    const day = dateMatch ? parseInt(dateMatch[3], 10) : 1;
+    
+    // Create a readable title from the filename
+    const titlePart = nameWithoutExt
+      .replace(/-\d{4}-\d{2}-\d{2}.*$/, '') // remove date suffix
+      .replace(/-/g, ' ')
+      .replace(/\b\w/g, (c) => c.toUpperCase()); // title case
+    
+    return {
+      id: nameWithoutExt,
+      title: titlePart,
+      year,
+      month,
+      day,
+      image: module.default,
+      medium: 'Graphic Design', // default medium
+    };
+  })
+  // Sort by date descending (newest first)
+  .sort((a, b) => {
+    const dateA = new Date(a.year, a.month - 1, a.day);
+    const dateB = new Date(b.year, b.month - 1, b.day);
+    return dateB.getTime() - dateA.getTime();
+  });
+---
+
+<section class="craft-scroll" aria-label="Creative Works">
+  <div class="craft-grid">
+    {craftItems.map((item, index) => (
+      <article 
+        class="craft-item" 
+        data-index={index}
+        data-column={index % 2 === 0 ? 'left' : 'right'}
+      >
+        <div class="image-wrapper">
+          <Image
+            src={item.image}
+            alt={item.title}
+            widths={[400, 600, 800, 1000]}
+            sizes="(max-width: 768px) 100vw, 50vw"
+            format="webp"
+            quality={80}
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <div class="content">
+          <h3 class="title">{item.title}</h3>
+          <span class="year">{item.year}</span>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .craft-scroll {
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+    overflow-x: hidden; /* Prevent horizontal scroll from rotated items */
+  }
+
+  .craft-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 768px) {
+    .craft-scroll {
+      padding: 2rem 1rem;
+    }
+    
+    .craft-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2.5rem 2rem;
+      align-items: start; /* Align items to top so varying heights look natural */
+    }
+  }
+
+  .craft-item {
+    /* GPU layer promotion for smooth animations */
+    will-change: transform, opacity;
+    transform-origin: center center;
+    
+    /* Initial hidden state - GSAP will reveal */
+    opacity: 0;
+    visibility: hidden;
+    
+    /* Prevent overflow from rotated items */
+    max-width: 100%;
+  }
+
+  .image-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: var(--border-color, #333);
+    /* Let images define their own aspect ratio */
+  }
+
+  .image-wrapper :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 80vh; /* Prevent super tall images from overflowing viewport */
+    object-fit: contain; /* Show full image without cropping */
+    transition: transform 0.4s ease-out;
+  }
+
+  .craft-item:hover .image-wrapper :global(img) {
+    transform: scale(1.03);
+  }
+
+  .content {
+    padding: 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+  }
+
+  .title {
+    font-family: var(--font-family-heading, 'Georgia', serif);
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 600;
+    margin: 0;
+    color: var(--color-foreground, #333);
+  }
+
+  .year {
+    font-family: var(--font-family-main, 'Times New Roman', serif);
+    font-size: 0.9rem;
+    opacity: 0.7;
+    flex-shrink: 0;
+  }
+
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .craft-item {
+      opacity: 1;
+      visibility: visible;
+      will-change: auto;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import Lenis from 'lenis';
+
+  // Register GSAP plugins
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Check for reduced motion preference
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!prefersReducedMotion) {
+    // Initialize Lenis for smooth scrolling
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // easeOutExpo
+      orientation: 'vertical',
+      smoothWheel: true,
+    });
+
+    // CRITICAL: Bind Lenis to GSAP's ticker for perfect sync
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+
+    // Update ScrollTrigger on Lenis scroll
+    lenis.on('scroll', ScrollTrigger.update);
+
+    // Select all craft items
+    const craftItems = document.querySelectorAll<HTMLElement>('.craft-item');
+
+    // Animate items with stagger for row-by-row effect
+    craftItems.forEach((item, index) => {
+      const column = item.dataset.column;
+      
+      // Set initial state based on column
+      // Use smaller rotation to prevent overflow on mobile
+      const initialRotation = column === 'left' ? -3 : 3;
+      const initialY = 50; // Smaller offset for tighter layouts
+
+      gsap.set(item, {
+        y: initialY,
+        rotation: initialRotation,
+        opacity: 0,
+        visibility: 'hidden',
+      });
+
+      // Create scroll-triggered animation
+      // Trigger earlier (95%) so even first rows animate in on page load
+      // Add small delay based on index for staggered row effect
+      const rowDelay = (index % 2) * 0.1; // 0 for left, 0.1s for right column
+      
+      gsap.to(item, {
+        y: 0,
+        rotation: 0,
+        opacity: 1,
+        visibility: 'visible',
+        duration: 0.8,
+        delay: rowDelay,
+        ease: 'expo.out',
+        scrollTrigger: {
+          trigger: item,
+          start: 'top 98%',  // Fire almost immediately when item enters viewport
+          end: 'top 70%',
+          toggleActions: 'play none none none',
+          // markers: true, // Uncomment for debugging
+        },
+      });
+    });
+
+    // Cleanup on page navigation (for View Transitions)
+    document.addEventListener('astro:before-swap', () => {
+      lenis.destroy();
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      gsap.ticker.remove((time: number) => {
+        lenis.raf(time * 1000);
+      });
+    });
+  } else {
+    // For users who prefer reduced motion, just show items immediately
+    const craftItems = document.querySelectorAll<HTMLElement>('.craft-item');
+    craftItems.forEach((item) => {
+      item.style.opacity = '1';
+      item.style.visibility = 'visible';
+    });
+  }
+</script>
