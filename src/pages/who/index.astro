@@ -25,7 +25,9 @@ const emailDomain = emailParts[1];
         >
       </div>
     </header>
-    <Content />
+    <div class="cv-body">
+      <Content />
+    </div>
   </div>
 </Layout>
 
@@ -64,6 +66,11 @@ const emailDomain = emailParts[1];
   .contact-info a {
     color: var(--color-foreground);
     text-decoration: none;
+  }
+  .cv-body {
+    width: 100%;
+    padding: 0 0.5rem; /* horizontal breathing room for CV content */
+    box-sizing: border-box;
   }
   .cv-container :global(.cv-grid) {
     display: grid;
