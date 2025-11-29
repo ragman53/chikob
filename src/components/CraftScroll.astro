@@ -220,8 +220,8 @@ const craftItems = Object.entries(craftImages)
         
         // Set initial state based on column
         // Use smaller rotation to prevent overflow on mobile
-        const initialRotation = column === 'left' ? -3 : 3;
-        const initialY = 50; // Smaller offset for tighter layouts
+        const initialRotation = column === 'left' ? -10 : 10;
+        const initialY = 150; // Smaller offset for tighter layouts
 
         gsap.set(item, {
           y: initialY,
@@ -240,14 +240,15 @@ const craftItems = Object.entries(craftImages)
           rotation: 0,
           opacity: 1,
           visibility: 'visible',
-          duration: 0.8,
+          duration: 1.0,
           delay: rowDelay,
-          ease: 'expo.out',
+          ease: 'power2.out',
           scrollTrigger: {
             trigger: item,
-            start: 'top 98%',  // Fire almost immediately when item enters viewport
-            end: 'top 70%',
-            toggleActions: 'play none none none',
+            start: 'top 70%',  // Fire almost immediately when item enters viewport
+            end: 'top 20%',
+            scrub: false,
+            toggleActions: 'play none none reverse',
             // markers: true, // Uncomment for debugging
           },
         });
