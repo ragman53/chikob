@@ -43,7 +43,7 @@ const posts = (await getCollection('idea')).sort(
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 1rem 0.5rem;
+		padding: 0.5rem 0.5rem;
 		cursor: pointer;
 		list-style: none;
 		font-size: clamp(0.5rem, 2vw, 1rem);
@@ -69,5 +69,18 @@ const posts = (await getCollection('idea')).sort(
 	}
 	.post-description p:lang(ja) {
 		font-family: var(--font-family-jp-main);
+	}
+
+	/* Mobile adjustments */
+	@media (max-width: 600px) {
+		/* Make Japanese titles larger on mobile */
+		.post-title:lang(ja) {
+			font-size: clamp(0.8rem, 4vw, 1.1rem);
+		}
+		/* Reduce description font size for both languages */
+		.post-description p {
+			font-size: 0.8rem;
+			line-height: 1;
+		}
 	}
 </style>

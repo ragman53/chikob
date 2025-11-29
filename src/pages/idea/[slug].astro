@@ -64,11 +64,26 @@ const { Content } = await post.render();
     font-size: clamp(1rem, 8vw, 2rem);
     font-family: var(--font-family-main);
     margin-bottom: 1rem;
-    line-height: 1.2;
+    line-height: 1;
   }
   .description {
-    font-size: 1rem;
+    font-size: 0.7rem;
     opacity: 0.8;
     margin-bottom: 1rem;
+  }
+
+  /* Mobile adjustments for article content */
+  @media (max-width: 600px) {
+    .prose[lang="ja"] :global(p),
+    .prose[lang="ja"] :global(li),
+    .prose[lang="ja"] :global(h1),
+    .prose[lang="ja"] :global(h2),
+    .prose[lang="ja"] :global(h3) {
+      font-size: 0.7em;
+    }
+    .prose[lang="ja"] :global(p),
+    .prose[lang="ja"] :global(li) {
+      line-height: 1.6;
+    }
   }
 </style>
